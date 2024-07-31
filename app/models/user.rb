@@ -6,4 +6,8 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }, if: :password_digest_changed?
   
   has_many :items
+
+  def as_json(options = {})
+    super(options.merge(except: [:password_digest]))
+  end
 end

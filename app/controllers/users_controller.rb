@@ -4,25 +4,19 @@ class UsersController < ApplicationController
   # GET /users
   def index
     @users = User.all
-
     render json: @users
   end
 
   def auth
-    # Extract email and password from the parameters
-    data = params.permit(:user_email, :user_password)
+    data = params.permit(:user_email, :password)
     user_email = data[:user_email]
-    user_password = data[:user_password]
+    password = data[:password]
 
-    # Find the user by email
     @user = User.find_by(user_email:)
 
-    if @user
-      if @user.user_password == user_password
-        render json: { id: @user.id, message: 'Authentication successful' }, status: :ok
-      end
+    if @user&.authenticate(password)
+      render json: @user
     else
-      # If authentication fails, respond with an error message
       render json: { message: 'Invalid email or password' }, status: :unauthorized
     end
   end
@@ -59,13 +53,11 @@ class UsersController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_user
     @user = User.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
   def user_params
-    params.require(:user).permit(:user_name, :user_email, :user_password)
+    params.require(:user).permit(:user_name, :user_email, :password, :password_confirmation)
   end
 end

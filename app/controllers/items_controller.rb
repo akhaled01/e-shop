@@ -1,16 +1,15 @@
-class ItemsController < ApplicationController # rubocop:disable Style/Documentation
+class ItemsController < ApplicationController
   before_action :set_item, only: %i[show update destroy]
 
   # GET /items
   def index
     @items = Item.includes(:user).all
-
-    render json: @items.to_json(include: :user)
+    render json: @items.to_json(include: { user: { except: :password_digest } })
   end
 
   # GET /items/1
   def show
-    render json: @item.to_json(include: :user)
+    render json: @item.to_json(include: { user: { except: :password_digest } })
   end
 
   # POST /items
@@ -18,7 +17,7 @@ class ItemsController < ApplicationController # rubocop:disable Style/Documentat
     @item = Item.new(item_params)
 
     if @item.save
-      render json: @item.to_json(include: :user), status: :created, location: @item
+      render json: @item.to_json(include: { user: { except: :password_digest } }), status: :created, location: @item
     else
       render json: @item.errors, status: :unprocessable_entity
     end
@@ -27,7 +26,7 @@ class ItemsController < ApplicationController # rubocop:disable Style/Documentat
   # PATCH/PUT /items/1
   def update
     if @item.update(item_params)
-      render json: @item.to_json(include: :user)
+      render json: @item.to_json(include: { user: { except: :password_digest } })
     else
       render json: @item.errors, status: :unprocessable_entity
     end
@@ -42,7 +41,7 @@ class ItemsController < ApplicationController # rubocop:disable Style/Documentat
 
   # Use callbacks to share common setup or constraints between actions.
   def set_item
-    @item = Item.includes(:user).find(params[:id])
+    @item = Item.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.

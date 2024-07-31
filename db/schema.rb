@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_29_160146) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_31_191351) do
   create_table "items", force: :cascade do |t|
     t.string "name"
     t.string "desc"
     t.decimal "price"
     t.string "image"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -23,9 +24,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_29_160146) do
   create_table "users", force: :cascade do |t|
     t.string "user_name"
     t.string "user_email"
-    t.string "user_password"
+    t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "items", "users"
 end
